@@ -1,45 +1,27 @@
-import re
 import os
+import tools
 
-username = input("What's the username of the player?")
-location = input("What's the directory name of the logs?")
-commands = input("What commands would you like to search for? (put , between commands, leave empty for default)")
-
-rgx = f".*(?:{username}).*(?:"
-o = 0
-i = 0
-
-if commands == "":
-    rgx = f".*(?:{username}).*(?:\/gmsp|\/gmc|\/gamemode|\/give|\/summon|fly|\/enchant|\/heal).*"
-else:
-    rgxlist = commands.split(",")
-    
-    i = len(rgxlist)-1
-
-    for command in rgxlist:
-        if o < i:  
-            rgx = rgx + f"\/{command}" + "|"
-            o += 1
-        elif o == i:
-            rgx = rgx + f"\/{command}"
+if os.path.isdir("logs") == False:
+    try:
+        os.mkdir("logs")
+        print("logs folder successfully created!")
         
-    
-    rgx = rgx + ").*"
+    except Exception as e:
+        print("An error has occured! Err: " + e)
 
-folderList = os.listdir(location)
-gmcCounter = 0
 
-for logname in folderList:
-    openfile = open("logs/" + logname)
-    
-    results = re.findall(rgx, openfile.read())
-    
-    if results != []:
-        for line in results:
-            print(line)
-        gmcCounter += len(results)
-    
-print(f"{username} has used illegal commands " + str(gmcCounter) + " times!")
-os.system("pause")
+print("Welcome to the LogChecker made by SleepySpeller on GitHub!\nWhat would you like to do?\n1. Download the files from an FTP Server and then scan them\n2. Scan the existing logs from a folder (logs must be extracted from the zip file)")
 
+answer = input("Type here > ")
+
+if answer == "1":
     
+    print("Downloading logs")
+    tools.Functions.downloadLogs()
+    print("Extracting logs...")
+    tools.Functions.extractLogs()
+    print("Done! Running the search tool!")
+    tools.Functions.search()
+elif answer == "2":
+    print("Running our search tool...")
+    tools.Functions.search()
